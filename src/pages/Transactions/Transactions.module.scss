@@ -1,0 +1,106 @@
+.container {
+  padding-bottom: 24px;
+}
+
+.header {
+  margin-bottom: 20px;
+}
+
+.pageTitle {
+  margin: 0 !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: #111827 !important;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.filterRow {
+  margin-bottom: 16px;
+  background: #fff;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+}
+
+.txDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.descText {
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.dateText {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.amountIn {
+  font-weight: 600;
+  color: #10b981;
+  font-size: 14px;
+}
+
+.amountOut {
+  font-weight: 600;
+  color: #ef4444;
+  font-size: 14px;
+}
+
+.editBtn {
+  color: #4f46e5 !important;
+
+  &:hover {
+    background: #eff1ff !important;
+  }
+}
+
+.deleteBtn {
+  color: #ef4444 !important;
+
+  &:hover {
+    background: #fef2f2 !important;
+  }
+}
+
+.table {
+  :global(.ant-table) {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+}
+
+.empty {
+  text-align: center;
+  padding: 80px 0;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+}
+
+.emptyIcon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.emptyText {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.emptyHint {
+  display: block;
+  font-size: 13px;
+  color: #9ca3af;
+  margin-top: 6px;
+}

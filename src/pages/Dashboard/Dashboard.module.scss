@@ -1,0 +1,101 @@
+.container {
+  padding-bottom: 16px;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+.pageHeader {
+  margin-bottom: 16px;
+}
+
+.pageTitle {
+  margin: 0 !important;
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #111827 !important;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.viewAll {
+  font-size: 13px;
+  color: #4f46e5;
+  padding: 0;
+  height: auto;
+}
+
+.txCard {
+  :global(.ant-card-head) {
+    padding: 12px 20px;
+    min-height: unset;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  :global(.ant-card-body) {
+    padding: 12px 20px !important;
+  }
+}
+
+.txItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f9fafb;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.txMeta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.txName {
+  font-size: 13px;
+  font-weight: 500;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.txDate {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.txAmountIn {
+  font-size: 13px;
+  font-weight: 600;
+  color: #10b981;
+  white-space: nowrap;
+}
+
+.txAmountOut {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ef4444;
+  white-space: nowrap;
+}
+
+.empty {
+  text-align: center;
+  color: #9ca3af;
+  padding: 24px 0;
+  font-size: 13px;
+}

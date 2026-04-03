@@ -1,0 +1,105 @@
+.sider {
+  :global(.ant-layout-sider-trigger) {
+    color: #6b7280;
+    border-top: 1px solid #f0f0f0;
+  }
+}
+
+.logo {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.logoBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logoIcon {
+  width: 32px;
+  height: 32px;
+  background: #4f46e5;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.logoText {
+  font-size: 18px;
+  letter-spacing: -0.3px;
+}
+
+.menu {
+  padding: 12px 0;
+}
+
+.header {
+  padding: 0 24px;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.searchBox {
+  max-width: 360px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 7px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  background: transparent;
+  color: inherit;
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+
+  &:focus {
+    border-color: #4f46e5;
+  }
+}
+
+.themeToggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.themeIcon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.notifBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.content {
+  padding: 24px;
+  min-height: calc(100vh - 64px);
+}
