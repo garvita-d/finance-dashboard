@@ -11,6 +11,10 @@
   :global(.ant-layout-sider-children) {
     background: var(--bg-card) !important;
   }
+
+  @media (max-width: 767px) {
+    display: none !important;
+  }
 }
 
 .logo {
@@ -83,6 +87,40 @@
   z-index: 100;
   background: var(--bg-card) !important;
   border-bottom: 1px solid var(--border);
+
+  @media (max-width: 767px) {
+    padding: 0 16px !important;
+  }
+}
+
+.mobileLogo {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+
+  @media (max-width: 767px) {
+    display: flex;
+  }
+}
+
+.mobileLogoIcon {
+  width: 28px;
+  height: 28px;
+  background: #f97316;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.mobileLogoText {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .themeToggle {
@@ -98,6 +136,11 @@
 
   &:hover {
     background: var(--bg-hover);
+  }
+
+  @media (max-width: 480px) {
+    padding: 5px 8px;
+    gap: 4px;
   }
 }
 
@@ -120,4 +163,83 @@
   padding: 24px;
   min-height: calc(100vh - 64px);
   background: var(--bg-layout) !important;
+
+  @media (max-width: 767px) {
+    padding: 16px 12px;
+    padding-bottom: 80px;
+  }
+}
+
+.bottomNav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+
+  @media (max-width: 767px) {
+    display: flex;
+  }
+}
+
+.bottomNavItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 60px;
+  border: none;
+  background: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    background: var(--bg-hover);
+    border-radius: 12px;
+  }
+}
+
+.bottomNavIcon {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition:
+    color 0.15s,
+    transform 0.15s;
+
+  &.active {
+    color: var(--primary);
+    transform: scale(1.1);
+  }
+}
+
+.bottomNavLabel {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color 0.15s;
+  letter-spacing: 0.01em;
+
+  &.active {
+    color: var(--primary);
+    font-weight: 600;
+  }
+}
+
+.bottomNavDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--primary);
+  margin-top: 2px;
 }

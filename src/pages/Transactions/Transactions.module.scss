@@ -4,6 +4,10 @@
 
 .header {
   margin-bottom: 20px;
+
+  @media (max-width: 767px) {
+    margin-bottom: 14px;
+  }
 }
 
 .pageTitle {
@@ -11,6 +15,10 @@
   font-size: 22px !important;
   font-weight: 700 !important;
   color: var(--text-primary) !important;
+
+  @media (max-width: 767px) {
+    font-size: 18px !important;
+  }
 }
 
 .subtitle {
@@ -33,6 +41,11 @@
     height: 36px !important;
     padding: 0 11px !important;
   }
+
+  @media (max-width: 767px) {
+    padding: 10px 12px;
+    gap: 8px;
+  }
 }
 
 .txDot {
@@ -46,6 +59,10 @@
   font-size: 14px;
   font-weight: 500;
   color: var(--text-primary);
+
+  @media (max-width: 767px) {
+    font-size: 13px;
+  }
 }
 
 .dateText {
@@ -88,7 +105,6 @@
     border: 1px solid var(--border);
   }
 
-  // Remove double border between filter row and table
   :global(.ant-table-thead > tr > th:first-child) {
     border-radius: 0 !important;
   }
@@ -98,6 +114,112 @@
     margin: 0 !important;
     border-top: 1px solid var(--border);
     background: var(--bg-card);
+  }
+
+  @media (max-width: 767px) {
+    :global(.ant-table-wrapper) {
+      overflow-x: auto;
+    }
+
+    :global(.ant-table) {
+      min-width: 520px;
+    }
+
+    :global(.ant-table-cell) {
+      padding: 10px 8px !important;
+      font-size: 12px !important;
+    }
+
+    :global(.ant-pagination) {
+      padding: 10px 12px;
+    }
+  }
+}
+
+.mobileCardList {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+.mobileCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mobileCardDot {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.mobileCardBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.mobileCardDesc {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.mobileCardMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+}
+
+.mobileCardDate {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.mobileCardCat {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 20px;
+}
+
+.mobileCardAmount {
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.mobileCardActions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.desktopTable {
+  @media (max-width: 767px) {
+    display: none;
   }
 }
 
@@ -114,6 +236,10 @@
   background: var(--bg-card);
   border-radius: 16px;
   border: 1px solid var(--border);
+
+  @media (max-width: 767px) {
+    padding: 50px 20px;
+  }
 }
 
 .emptyIcon {

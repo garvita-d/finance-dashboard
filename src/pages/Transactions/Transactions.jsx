@@ -18,7 +18,7 @@ import dayjs from "dayjs";
 import { useAppContext } from "../../context/AppContext";
 import { useGetTransactions } from "../../api/transactions/queries";
 import TransactionModal from "../../components/TransactionModal/TransactionModal";
-import { formatCurrency, exportToCSV, exportToJSON } from "../../utils/helpers";
+import { exportToCSV, exportToJSON } from "../../utils/helpers";
 import { CATEGORIES, CATEGORY_COLORS } from "../../constants";
 import {
   PlusIcon,
@@ -235,18 +235,26 @@ const Transactions = () => {
           </span>
         </Col>
         <Col>
-          <Space>
+          <Space size={8}>
             <Dropdown menu={{ items: exportMenuItems }}>
-              <Button icon={<ExportIcon />}>Export</Button>
+              <Button icon={<ExportIcon />} size="small">
+                Export
+              </Button>
             </Dropdown>
-            <Button type="primary" icon={<PlusIcon />} onClick={openAddModal}>
+            <Button
+              type="primary"
+              icon={<PlusIcon />}
+              onClick={openAddModal}
+              size="small"
+            >
               Add new
             </Button>
           </Space>
         </Col>
       </Row>
 
-      <Row gutter={[12, 12]} className={styles.filterRow} align="middle">
+      {/* Filters */}
+      <Row gutter={[8, 8]} className={styles.filterRow} align="middle">
         <Col xs={24} sm={8}>
           <Input
             placeholder="Search transactions..."
@@ -256,7 +264,7 @@ const Transactions = () => {
             allowClear
           />
         </Col>
-        <Col xs={12} sm={4}>
+        <Col xs={8} sm={4}>
           <Select
             options={TYPE_FILTER_OPTIONS}
             value={typeFilter}
@@ -264,7 +272,7 @@ const Transactions = () => {
             style={{ width: "100%" }}
           />
         </Col>
-        <Col xs={12} sm={5}>
+        <Col xs={8} sm={5}>
           <Select
             options={CATEGORY_FILTER_OPTIONS}
             value={categoryFilter}
@@ -273,14 +281,14 @@ const Transactions = () => {
             showSearch
           />
         </Col>
-        <Col xs={12} sm={4}>
+        <Col xs={8} sm={4}>
           <Select
             value={sortOrder}
             onChange={setSortOrder}
             style={{ width: "100%" }}
             options={[
-              { label: "Newest first", value: "desc" },
-              { label: "Oldest first", value: "asc" },
+              { label: "Newest", value: "desc" },
+              { label: "Oldest", value: "asc" },
             ]}
           />
         </Col>
@@ -295,13 +303,95 @@ const Transactions = () => {
           </span>
         </div>
       ) : (
-        <Table
-          dataSource={filtered}
-          columns={columns}
-          rowKey="id"
-          pagination={{ pageSize: 10, showSizeChanger: true }}
-          className={styles.table}
-        />
+        <>
+          <div className={styles.desktopTable}>
+            <Table
+              dataSource={filtered}
+              columns={columns}
+              rowKey="id"
+              pagination={{ pageSize: 10, showSizeChanger: true }}
+              className={styles.table}
+            />
+          </div>
+
+          <div className={styles.mobileCardList}>
+            {filtered.map((tx) => {
+              const color = CATEGORY_COLORS[tx.category] || "#9ca3af";
+              const isIncome = tx.type === "income";
+              return (
+                <div key={tx.id} className={styles.mobileCard}>
+                  <div
+                    className={styles.mobileCardDot}
+                    style={{ background: `${color}22` }}
+                  >
+                    <span style={{ color, fontSize: 16 }}>
+                      {tx.category?.[0]}
+                    </span>
+                  </div>
+                  <div className={styles.mobileCardBody}>
+                    <span className={styles.mobileCardDesc}>
+                      {tx.description}
+                    </span>
+                    <div className={styles.mobileCardMeta}>
+                      <span className={styles.mobileCardDate}>
+                        {dayjs(tx.date).format("DD MMM YYYY")}
+                      </span>
+                      <span
+                        className={styles.mobileCardCat}
+                        style={{
+                          background: `${color}18`,
+                          color,
+                        }}
+                      >
+                        {tx.category}
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-end",
+                      gap: 6,
+                    }}
+                  >
+                    <span
+                      className={styles.mobileCardAmount}
+                      style={{ color: isIncome ? "#10b981" : "#ef4444" }}
+                    >
+                      {isIncome ? "+" : "-"}₹
+                      {Number(tx.amount).toLocaleString("en-IN")}
+                    </span>
+                    <div className={styles.mobileCardActions}>
+                      <Space size={4}>
+                        <Button
+                          type="text"
+                          size="small"
+                          icon={<EditIcon />}
+                          onClick={() => openEditModal(tx)}
+                          className={styles.editBtn}
+                        />
+                        <Popconfirm
+                          title="Delete?"
+                          onConfirm={() => handleDelete(tx.id)}
+                          okText="Yes"
+                          cancelText="No"
+                        >
+                          <Button
+                            type="text"
+                            size="small"
+                            icon={<DeleteIcon />}
+                            className={styles.deleteBtn}
+                          />
+                        </Popconfirm>
+                      </Space>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </>
       )}
 
       <TransactionModal

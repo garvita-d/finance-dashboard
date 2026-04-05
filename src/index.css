@@ -24,11 +24,11 @@
 }
 
 [data-theme="dark"] {
-  --bg-layout: #0a0a0a; /* true black layout background */
-  --bg-card: #111111; /* true dark card, no purple */
-  --bg-hover: #1a1a1a; /* subtle hover, pure dark */
-  --bg-input: #181818; /* input background, pure dark */
-  --border: #2a2a2a; /* border, neutral dark */
+  --bg-layout: #0a0a0a;
+  --bg-card: #111111;
+  --bg-hover: #1a1a1a;
+  --bg-input: #181818;
+  --border: #2a2a2a;
   --text-primary: #f0f0f0;
   --text-secondary: #888888;
   --text-muted: #555555;
@@ -37,7 +37,6 @@
   --primary: #f97316;
   --primary-hover: #ea6c0a;
   --primary-light: rgba(249, 115, 22, 0.18);
-  /* notification-specific overrides */
   --notification-bg: #1f1f1f;
   --notification-border: #333333;
 }
@@ -52,7 +51,6 @@ body {
   color: var(--text-primary);
 }
 
-/* ── Layout ── */
 .ant-layout,
 .ant-layout-content {
   background: var(--bg-layout) !important;
@@ -76,7 +74,6 @@ body {
   border-top: 1px solid var(--border) !important;
 }
 
-/* ── Menu ── */
 .ant-menu,
 .ant-menu-root,
 .ant-menu-inline,
@@ -142,7 +139,6 @@ body {
   color: var(--primary) !important;
 }
 
-/* ── Card ── */
 .ant-card,
 .ant-card-bordered {
   background: var(--bg-card) !important;
@@ -166,7 +162,6 @@ body {
   padding: 20px 24px !important;
 }
 
-/* ── Typography ── */
 .ant-typography,
 span.ant-typography,
 div.ant-typography,
@@ -179,7 +174,6 @@ h5.ant-typography,
   color: var(--text-primary) !important;
 }
 
-/* ── Table ── */
 .ant-table {
   background: var(--bg-card) !important;
   color: var(--text-primary) !important;
@@ -233,7 +227,6 @@ h5.ant-typography,
   background: var(--bg-layout) !important;
 }
 
-/* ── Inputs ── */
 .ant-input,
 .ant-input-affix-wrapper {
   background: var(--bg-input) !important;
@@ -292,7 +285,6 @@ h5.ant-typography,
   box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.12) !important;
 }
 
-/* ── Select ── */
 .ant-select-selector {
   background: var(--bg-input) !important;
   border-color: var(--border) !important;
@@ -348,7 +340,6 @@ h5.ant-typography,
   font-weight: 600 !important;
 }
 
-/* ── DatePicker ── */
 .ant-picker {
   background: var(--bg-input) !important;
   border-color: var(--border) !important;
@@ -420,7 +411,6 @@ h5.ant-typography,
   border-top: 1px solid var(--border) !important;
 }
 
-/* ── Modal ── */
 .ant-modal-content {
   background: var(--bg-card) !important;
   border-radius: 16px !important;
@@ -446,7 +436,6 @@ h5.ant-typography,
   border-top: 1px solid var(--border) !important;
 }
 
-/* ── Form ── */
 .ant-form-item-label > label {
   color: var(--text-primary) !important;
   font-weight: 500 !important;
@@ -456,7 +445,6 @@ h5.ant-typography,
   font-size: 12px !important;
 }
 
-/* ── Buttons ── */
 .ant-btn-primary {
   background: var(--primary) !important;
   border-color: var(--primary) !important;
@@ -501,7 +489,6 @@ h5.ant-typography,
   border-color: #ef4444 !important;
 }
 
-/* ── Tabs ── */
 .ant-tabs-tab {
   color: var(--text-secondary) !important;
   font-size: 13px !important;
@@ -524,7 +511,6 @@ h5.ant-typography,
   border-bottom: 1px solid var(--border) !important;
 }
 
-/* ── Tags ── */
 .ant-tag {
   border-radius: 20px !important;
   font-weight: 500 !important;
@@ -533,12 +519,10 @@ h5.ant-typography,
   border: none !important;
 }
 
-/* ── Divider ── */
 .ant-divider {
   border-color: var(--border) !important;
 }
 
-/* ── Popconfirm / Popover ── */
 .ant-popover-inner {
   background: var(--bg-card) !important;
   border: 1px solid var(--border) !important;
@@ -560,7 +544,6 @@ h5.ant-typography,
   background: var(--bg-card) !important;
 }
 
-/* ── Dropdown ── */
 .ant-dropdown .ant-dropdown-menu,
 .ant-dropdown-menu {
   background: var(--bg-card) !important;
@@ -599,7 +582,6 @@ h5.ant-typography,
   color: #ef4444 !important;
 }
 
-/* ── Pagination ── */
 .ant-pagination-item {
   background: var(--bg-card) !important;
   border-color: var(--border) !important;
@@ -639,7 +621,6 @@ h5.ant-typography,
   background: transparent !important;
 }
 
-/* ── Switch ── */
 .ant-switch {
   background: var(--border) !important;
 }
@@ -652,7 +633,6 @@ h5.ant-typography,
   background: #fff !important;
 }
 
-/* ── Checkbox ── */
 .ant-checkbox-inner {
   background: var(--bg-input) !important;
   border-color: var(--border) !important;
@@ -667,20 +647,10 @@ h5.ant-typography,
   color: var(--text-primary) !important;
 }
 
-/* ── Spin ── */
 .ant-spin-dot-item {
   background: var(--primary) !important;
 }
 
-/* ── Notification ── */
-/*
- * Ant Design renders notifications in a portal appended directly to <body>,
- * OUTSIDE the [data-theme="dark"] wrapper. CSS variables from the theme
- * never reach it. We must use hardcoded values here and drive the dark/light
- * switch by checking the attribute on <html> or <body> instead.
- */
-
-/* Light mode default */
 .ant-notification-notice {
   background: #ffffff !important;
   border: 1px solid #e5e7eb !important;
@@ -705,8 +675,6 @@ h5.ant-typography,
   color: #111827 !important;
 }
 
-/* Dark mode — target the attribute on html or body,
-   which IS an ancestor of the portal */
 html[data-theme="dark"] .ant-notification-notice,
 body[data-theme="dark"] .ant-notification-notice,
 :root[data-theme="dark"] .ant-notification-notice {
@@ -739,7 +707,6 @@ body[data-theme="dark"] .ant-notification-notice-close:hover {
   color: #10b981 !important;
 }
 
-/* ── Statistic ── */
 .ant-statistic-title {
   color: var(--text-secondary) !important;
 }
@@ -749,12 +716,10 @@ body[data-theme="dark"] .ant-notification-notice-close:hover {
   color: var(--text-primary) !important;
 }
 
-/* ── Empty ── */
 .ant-empty-description {
   color: var(--text-muted) !important;
 }
 
-/* ── Scrollbar ── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -771,4 +736,107 @@ body[data-theme="dark"] .ant-notification-notice-close:hover {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
+}
+
+@media (max-width: 767px) {
+  .ant-card-body {
+    padding: 16px !important;
+  }
+
+  .ant-card-head {
+    padding: 0 16px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .ant-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 767px) {
+  .ant-modal {
+    max-width: 100vw !important;
+    margin: 0 !important;
+    top: 0 !important;
+    padding: 0 !important;
+  }
+
+  .ant-modal-content {
+    border-radius: 0 !important;
+    min-height: 100vh;
+  }
+
+  .ant-modal-wrap {
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 767px) {
+  .ant-tabs-nav-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ant-tabs-nav-list {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .ant-dropdown {
+    width: calc(100vw - 24px) !important;
+    left: 12px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .ant-select-dropdown {
+    max-width: calc(100vw - 24px);
+  }
+}
+
+@media (max-width: 767px) {
+  .recharts-responsive-container {
+    min-width: 0 !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .ant-popover {
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 767px) {
+  .ant-notification {
+    margin-right: 8px !important;
+    margin-left: 8px !important;
+  }
+
+  .ant-notification-notice {
+    width: calc(100vw - 16px) !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .ant-row {
+    row-gap: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .ant-btn {
+    font-size: 13px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .ant-input-affix-wrapper,
+  .ant-input,
+  .ant-select-selector,
+  .ant-picker {
+    font-size: 16px !important;
+  }
 }

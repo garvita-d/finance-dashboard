@@ -23,10 +23,25 @@ const { Sider, Content, Header } = Layout;
 const { Text } = Typography;
 
 const NAV_ITEMS = [
-  { key: "/dashboard", label: "Dashboard", icon: <DashboardIcon /> },
-  { key: "/analytics", label: "Analytics", icon: <AnalyticsIcon /> },
-  { key: "/transactions", label: "Transaction", icon: <TransactionIcon /> },
-  { key: "/settings", label: "Setting", icon: <SettingsIcon /> },
+  {
+    key: "/dashboard",
+    label: "Dashboard",
+    icon: <DashboardIcon />,
+    emoji: "🏠",
+  },
+  {
+    key: "/analytics",
+    label: "Analytics",
+    icon: <AnalyticsIcon />,
+    emoji: "📊",
+  },
+  {
+    key: "/transactions",
+    label: "Transactions",
+    icon: <TransactionIcon />,
+    emoji: "💳",
+  },
+  { key: "/settings", label: "Settings", icon: <SettingsIcon />, emoji: "⚙️" },
 ];
 
 const AppLayout = ({ children }) => {
@@ -70,15 +85,29 @@ const AppLayout = ({ children }) => {
         <Menu
           mode="inline"
           selectedKeys={[location.pathname]}
-          items={NAV_ITEMS}
+          items={NAV_ITEMS.map(({ key, label, icon }) => ({
+            key,
+            label,
+            icon,
+          }))}
           onClick={({ key }) => navigate(key)}
           className={styles.menu}
           style={{ background: "transparent", borderInlineEnd: "none" }}
         />
       </Sider>
+
       <Layout>
         <Header className={styles.header}>
-          <Row align="middle" justify="end" style={{ height: "100%" }}>
+          <Row
+            align="middle"
+            justify="space-between"
+            style={{ height: "100%" }}
+          >
+            <Col className={styles.mobileLogo}>
+              <div className={styles.mobileLogoIcon}>F</div>
+              <span className={styles.mobileLogoText}>inFlow</span>
+            </Col>
+
             <Col>
               <Row align="middle" gutter={12}>
                 <Col>
@@ -115,8 +144,34 @@ const AppLayout = ({ children }) => {
             </Col>
           </Row>
         </Header>
+
         <Content className={styles.content}>{children}</Content>
       </Layout>
+
+      <nav className={styles.bottomNav}>
+        {NAV_ITEMS.map((item) => {
+          const isActive = location.pathname === item.key;
+          return (
+            <button
+              key={item.key}
+              className={styles.bottomNavItem}
+              onClick={() => navigate(item.key)}
+            >
+              <span
+                className={`${styles.bottomNavIcon} ${isActive ? styles.active : ""}`}
+              >
+                {item.emoji}
+              </span>
+              <span
+                className={`${styles.bottomNavLabel} ${isActive ? styles.active : ""}`}
+              >
+                {item.label}
+              </span>
+              {isActive && <span className={styles.bottomNavDot} />}
+            </button>
+          );
+        })}
+      </nav>
     </Layout>
   );
 };
