@@ -1,7 +1,30 @@
 .form {
-  margin-top: 16px;
+  margin-top: 20px;
+
+  :global(.ant-form-item) {
+    margin-bottom: 16px;
+  }
+
+  :global(.ant-form-item-label) {
+    padding-bottom: 4px;
+
+    label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+  }
+
+  :global(.ant-input),
+  :global(.ant-input-number),
+  :global(.ant-picker),
+  :global(.ant-select .ant-select-selector) {
+    border-radius: 8px !important;
+  }
 }
 
 .footer {
-  margin-top: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
 }

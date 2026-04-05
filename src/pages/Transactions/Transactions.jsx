@@ -8,23 +8,21 @@ import {
   Select,
   Table,
   Tag,
-  Spin,
   Popconfirm,
   notification,
   Dropdown,
   Space,
+  Spin,
 } from "antd";
 import dayjs from "dayjs";
 import { useAppContext } from "../../context/AppContext";
-import TransactionModal from "../../components/TransactionModal/TransactionModal";
-import { formatCurrency } from "../../utils/helpers";
-import { exportToCSV, exportToJSON } from "../../utils/helpers";
-import { CATEGORIES, ROLES, CATEGORY_COLORS } from "../../constants";
 import { useGetTransactions } from "../../api/transactions/queries";
+import TransactionModal from "../../components/TransactionModal/TransactionModal";
+import { formatCurrency, exportToCSV, exportToJSON } from "../../utils/helpers";
+import { CATEGORIES, CATEGORY_COLORS } from "../../constants";
 import {
   PlusIcon,
   SearchIcon,
-  FilterIcon,
   ExportIcon,
   EditIcon,
   DeleteIcon,
@@ -45,9 +43,8 @@ const CATEGORY_FILTER_OPTIONS = [
 ];
 
 const Transactions = () => {
+  const { deleteTransaction, isDeleting } = useAppContext();
   const { data: transactions = [], isLoading } = useGetTransactions();
-  const { deleteTransaction, role } = useAppContext();
-  const isAdmin = role === ROLES.ADMIN;
 
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
@@ -70,8 +67,10 @@ const Transactions = () => {
 
   const handleDelete = useCallback(
     (id) => {
-      deleteTransaction(id);
-      notification.success({ message: "Transaction deleted" });
+      deleteTransaction(id, {
+        onSuccess: () =>
+          notification.success({ message: "Transaction deleted" }),
+      });
     },
     [deleteTransaction],
   );
@@ -114,9 +113,9 @@ const Transactions = () => {
       dataIndex: "date",
       key: "date",
       render: (d) => (
-        <Text className={styles.dateText}>
+        <span className={styles.dateText}>
           {dayjs(d).format("DD MMM YYYY")}
-        </Text>
+        </span>
       ),
       sorter: (a, b) => dayjs(a.date).valueOf() - dayjs(b.date).valueOf(),
     },
@@ -135,7 +134,7 @@ const Transactions = () => {
             />
           </Col>
           <Col>
-            <Text className={styles.descText}>{text}</Text>
+            <span className={styles.descText}>{text}</span>
           </Col>
         </Row>
       ),
@@ -147,7 +146,7 @@ const Transactions = () => {
       render: (cat) => (
         <Tag
           style={{
-            background: `${CATEGORY_COLORS[cat] || "#9ca3af"}18`,
+            background: `${CATEGORY_COLORS[cat] || "#9ca3af"}20`,
             color: CATEGORY_COLORS[cat] || "#9ca3af",
             border: "none",
           }}
@@ -174,51 +173,55 @@ const Transactions = () => {
       dataIndex: "amount",
       key: "amount",
       render: (amount, record) => (
-        <Text
+        <span
           className={
             record.type === "income" ? styles.amountIn : styles.amountOut
           }
         >
-          {record.type === "income" ? "+" : "-"}
-          {formatCurrency(amount)}
-        </Text>
+          {record.type === "income" ? "+" : "-"}₹
+          {Number(amount).toLocaleString("en-IN")}
+        </span>
       ),
       sorter: (a, b) => a.amount - b.amount,
     },
-    ...(isAdmin
-      ? [
-          {
-            title: "Actions",
-            key: "actions",
-            render: (_, record) => (
-              <Space>
-                <Button
-                  type="text"
-                  size="small"
-                  icon={<EditIcon />}
-                  onClick={() => openEditModal(record)}
-                  className={styles.editBtn}
-                />
-                <Popconfirm
-                  title="Delete this transaction?"
-                  onConfirm={() => handleDelete(record.id)}
-                  okText="Yes"
-                  cancelText="No"
-                >
-                  <Button
-                    type="text"
-                    size="small"
-                    icon={<DeleteIcon />}
-                    className={styles.deleteBtn}
-                  />
-                </Popconfirm>
-              </Space>
-            ),
-          },
-        ]
-      : []),
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <Space>
+          <Button
+            type="text"
+            size="small"
+            icon={<EditIcon />}
+            onClick={() => openEditModal(record)}
+            className={styles.editBtn}
+          />
+          <Popconfirm
+            title="Delete this transaction?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button
+              type="text"
+              size="small"
+              icon={<DeleteIcon />}
+              className={styles.deleteBtn}
+              loading={isDeleting}
+            />
+          </Popconfirm>
+        </Space>
+      ),
+    },
   ];
-  if (isLoading) return <Spin size="large" />;
+
+  if (isLoading) {
+    return (
+      <div className={styles.loader}>
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -227,22 +230,18 @@ const Transactions = () => {
           <Title level={2} className={styles.pageTitle}>
             Transactions
           </Title>
-          <Text className={styles.subtitle}>
+          <span className={styles.subtitle}>
             {filtered.length} transactions found
-          </Text>
+          </span>
         </Col>
         <Col>
           <Space>
-            {isAdmin && (
-              <Dropdown menu={{ items: exportMenuItems }}>
-                <Button icon={<ExportIcon />}>Export</Button>
-              </Dropdown>
-            )}
-            {isAdmin && (
-              <Button type="primary" icon={<PlusIcon />} onClick={openAddModal}>
-                Add new
-              </Button>
-            )}
+            <Dropdown menu={{ items: exportMenuItems }}>
+              <Button icon={<ExportIcon />}>Export</Button>
+            </Dropdown>
+            <Button type="primary" icon={<PlusIcon />} onClick={openAddModal}>
+              Add new
+            </Button>
           </Space>
         </Col>
       </Row>
@@ -290,8 +289,10 @@ const Transactions = () => {
       {filtered.length === 0 ? (
         <div className={styles.empty}>
           <div className={styles.emptyIcon}>📭</div>
-          <Text className={styles.emptyText}>No transactions found</Text>
-          <Text className={styles.emptyHint}>Try adjusting your filters</Text>
+          <span className={styles.emptyText}>No transactions found</span>
+          <span className={styles.emptyHint}>
+            Try adjusting your filters or add a new transaction
+          </span>
         </div>
       ) : (
         <Table

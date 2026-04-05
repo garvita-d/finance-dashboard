@@ -1,4 +1,10 @@
-import { createContext, useContext, useCallback, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useCallback,
+  useState,
+  useEffect,
+} from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { notification } from "antd";
 import {
@@ -6,81 +12,94 @@ import {
   updateTransaction,
   deleteTransaction,
 } from "../api/transactions/mutations";
-import { loadRole, saveRole } from "../utils/helpers";
+import { signOut, getSession } from "../api/auth/mutations";
+import supabase from "../config/supabaseClient";
 
 const AppContext = createContext(null);
 
-const getSystemTheme = () => {
+const getInitialTheme = () => {
+  const stored = localStorage.getItem("financeTheme");
+  if (stored) return stored;
   return window.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light";
 };
 
-const loadTheme = () => {
-  return localStorage.getItem("financeTheme") || getSystemTheme();
-};
-
 export const AppProvider = ({ children }) => {
   const queryClient = useQueryClient();
-  const [role, setRole] = useState(loadRole);
-  const [theme, setTheme] = useState(loadTheme);
+  const [theme, setTheme] = useState(getInitialTheme);
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("financeTheme", theme);
+  }, [theme]);
+
+  useEffect(() => {
+    getSession().then((session) => {
+      setUser(session?.user ?? null);
+      setAuthLoading(false);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+        queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      },
+    );
+
+    return () => listener.subscription.unsubscribe();
+  }, [queryClient]);
 
   const addMutation = useMutation({
     mutationFn: (payload) => createTransaction(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["transactions"] });
-    },
-    onError: (err) => {
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+    onError: (err) =>
       notification.error({
         message: err.message || "Failed to add transaction",
-      });
-    },
+      }),
   });
 
   const editMutation = useMutation({
     mutationFn: (payload) => updateTransaction(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["transactions"] });
-    },
-    onError: (err) => {
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+    onError: (err) =>
       notification.error({
         message: err.message || "Failed to update transaction",
-      });
-    },
+      }),
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id) => deleteTransaction(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["transactions"] });
-    },
-    onError: (err) => {
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+    onError: (err) =>
       notification.error({
         message: err.message || "Failed to delete transaction",
-      });
-    },
+      }),
   });
 
-  const switchRole = useCallback((newRole) => {
-    setRole(newRole);
-    saveRole(newRole);
+  const toggleTheme = useCallback(() => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
   }, []);
 
-  const toggleTheme = useCallback(() => {
-    setTheme((prev) => {
-      const next = prev === "dark" ? "light" : "dark";
-      localStorage.setItem("financeTheme", next);
-      return next;
-    });
-  }, []);
+  const logout = useCallback(async () => {
+    await signOut();
+    queryClient.clear();
+    notification.success({ message: "Signed out successfully" });
+  }, [queryClient]);
 
   return (
     <AppContext.Provider
       value={{
-        role,
+        user,
+        authLoading,
         theme,
-        switchRole,
         toggleTheme,
+        logout,
         addTransaction: addMutation.mutate,
         editTransaction: editMutation.mutate,
         deleteTransaction: deleteMutation.mutate,

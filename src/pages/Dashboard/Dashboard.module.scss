@@ -17,31 +17,25 @@
   margin: 0 !important;
   font-size: 22px !important;
   font-weight: 700 !important;
-  color: #111827 !important;
+  color: var(--text-primary) !important;
 }
 
 .sectionTitle {
   font-size: 14px;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-primary);
 }
 
 .viewAll {
   font-size: 13px;
-  color: #4f46e5;
   padding: 0;
   height: auto;
+  font-weight: 500;
 }
 
 .txCard {
-  :global(.ant-card-head) {
-    padding: 12px 20px;
-    min-height: unset;
-    border-bottom: 1px solid #f0f0f0;
-  }
-
   :global(.ant-card-body) {
-    padding: 12px 20px !important;
+    padding: 8px 20px 16px !important;
   }
 }
 
@@ -50,7 +44,7 @@
   align-items: center;
   gap: 10px;
   padding: 10px 0;
-  border-bottom: 1px solid #f9fafb;
+  border-bottom: 1px solid var(--border);
 
   &:last-child {
     border-bottom: none;
@@ -68,7 +62,7 @@
 .txName {
   font-size: 13px;
   font-weight: 500;
-  color: #111827;
+  color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -76,7 +70,7 @@
 
 .txDate {
   font-size: 11px;
-  color: #9ca3af;
+  color: var(--text-muted);
 }
 
 .txAmountIn {
@@ -95,7 +89,7 @@
 
 .empty {
   text-align: center;
-  color: #9ca3af;
+  color: var(--text-muted);
   padding: 24px 0;
   font-size: 13px;
 }

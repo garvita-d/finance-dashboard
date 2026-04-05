@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   Modal,
   Form,
@@ -24,7 +25,28 @@ const CATEGORY_OPTIONS = CATEGORIES.map((c) => ({ label: c, value: c }));
 
 const TransactionModal = ({ open, onClose, editData }) => {
   const [form] = Form.useForm();
-  const { addTransaction, editTransaction } = useAppContext();
+  const { addTransaction, editTransaction, isAdding, isEditing } =
+    useAppContext();
+
+  // ✅ Reactively update form whenever editData changes or modal opens
+  useEffect(() => {
+    if (open) {
+      if (editData) {
+        form.setFieldsValue({
+          ...editData,
+          date: dayjs(editData.date),
+        });
+      } else {
+        form.setFieldsValue({
+          type: TRANSACTION_TYPES.EXPENSE,
+          date: dayjs(),
+          description: undefined,
+          amount: undefined,
+          category: undefined,
+        });
+      }
+    }
+  }, [open, editData, form]);
 
   const handleSubmit = () => {
     form.validateFields().then((values) => {
@@ -34,36 +56,41 @@ const TransactionModal = ({ open, onClose, editData }) => {
         amount: Number(values.amount),
       };
       if (editData) {
-        editTransaction({ id: editData.id, ...payload });
-        notification.success({ message: "Transaction updated" });
+        editTransaction(
+          { id: editData.id, ...payload },
+          {
+            onSuccess: () => {
+              notification.success({ message: "Transaction updated" });
+              form.resetFields();
+              onClose();
+            },
+          },
+        );
       } else {
-        addTransaction(payload);
-        notification.success({ message: "Transaction added" });
+        addTransaction(payload, {
+          onSuccess: () => {
+            notification.success({ message: "Transaction added" });
+            form.resetFields();
+            onClose();
+          },
+        });
       }
-      form.resetFields();
-      onClose();
     });
   };
-
-  const initialValues = editData
-    ? { ...editData, date: dayjs(editData.date) }
-    : { type: TRANSACTION_TYPES.EXPENSE, date: dayjs() };
 
   return (
     <Modal
       open={open}
-      onCancel={onClose}
+      onCancel={() => {
+        form.resetFields();
+        onClose();
+      }}
       title={editData ? "Edit Transaction" : "Add Transaction"}
       footer={null}
       width={480}
-      destroyOnClose
+      destroyOnClose={false} // ✅ Keep false so our useEffect controls the values
     >
-      <Form
-        form={form}
-        layout="vertical"
-        initialValues={initialValues}
-        className={styles.form}
-      >
+      <Form form={form} layout="vertical" className={styles.form}>
         <Form.Item
           name="description"
           label="Description"
@@ -83,7 +110,7 @@ const TransactionModal = ({ open, onClose, editData }) => {
                 min={0}
                 precision={2}
                 style={{ width: "100%" }}
-                prefix="$"
+                prefix="₹"
               />
             </Form.Item>
           </Col>
@@ -115,10 +142,21 @@ const TransactionModal = ({ open, onClose, editData }) => {
         </Row>
         <Row justify="end" gutter={12} className={styles.footer}>
           <Col>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button
+              onClick={() => {
+                form.resetFields();
+                onClose();
+              }}
+            >
+              Cancel
+            </Button>
           </Col>
           <Col>
-            <Button type="primary" onClick={handleSubmit}>
+            <Button
+              type="primary"
+              onClick={handleSubmit}
+              loading={isAdding || isEditing}
+            >
               {editData ? "Update" : "Add Transaction"}
             </Button>
           </Col>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { ConfigProvider, theme as antdTheme } from "antd";
@@ -17,6 +17,10 @@ const ThemedApp = () => {
   const { theme } = useAppContext();
   const isDark = theme === "dark";
 
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
   return (
     <ConfigProvider
       theme={{
@@ -24,7 +28,7 @@ const ThemedApp = () => {
           ? antdTheme.darkAlgorithm
           : antdTheme.defaultAlgorithm,
         token: {
-          colorPrimary: "#4f46e5",
+          colorPrimary: "#f97316",
           colorSuccess: "#10b981",
           colorError: "#ef4444",
           colorWarning: "#f59e0b",
