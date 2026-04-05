@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
-import { ROLE_STORAGE_KEY, ROLES } from "../constants";
+import { ROLE_STORAGE_KEY } from "../constants";
 
 export const loadRole = () => {
-  return localStorage.getItem(ROLE_STORAGE_KEY) || ROLES.ADMIN;
+  return localStorage.getItem(ROLE_STORAGE_KEY) || "admin";
 };
 
 export const saveRole = (role) => {
