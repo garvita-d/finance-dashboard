@@ -7,6 +7,7 @@ import Transactions from "./pages/Transactions/Transactions";
 import Analytics from "./pages/Analytics/Analytics";
 import Settings from "./pages/Settings/Settings";
 import Login from "./pages/Login/Login";
+import ResetPassword from "./pages/ResetPassword/ResetPassword";
 
 const ProtectedRoute = ({ children }) => {
   const { user, authLoading } = useAppContext();
@@ -65,6 +66,7 @@ const App = () => {
           path="/login"
           element={user ? <Navigate to="/dashboard" replace /> : <Login />}
         />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route
           path="/*"
           element={
