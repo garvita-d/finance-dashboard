@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { Spin, ConfigProvider, theme as antTheme } from "antd"; // ← add ConfigProvider + antTheme
+import { Spin, ConfigProvider, theme as antTheme } from "antd";
 import { useAppContext } from "./context/AppContext";
 import AppLayout from "./components/AppLayout/AppLayout";
 import Dashboard from "./pages/Dashboard/Dashboard";

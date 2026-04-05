@@ -1,8 +1,3 @@
-export const ROLES = {
-  ADMIN: "admin",
-  VIEWER: "viewer",
-};
-
 export const TRANSACTION_TYPES = {
   INCOME: "income",
   EXPENSE: "expense",

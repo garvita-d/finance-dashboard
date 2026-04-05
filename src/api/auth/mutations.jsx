@@ -14,7 +14,6 @@ export const signUp = async ({ email, password }) => {
     email,
     password,
     options: {
-      // After confirming email, redirect to your app
       emailRedirectTo: `${window.location.origin}/dashboard`,
     },
   });

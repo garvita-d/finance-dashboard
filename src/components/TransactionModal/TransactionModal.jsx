@@ -28,7 +28,6 @@ const TransactionModal = ({ open, onClose, editData }) => {
   const { addTransaction, editTransaction, isAdding, isEditing } =
     useAppContext();
 
-  // ✅ Reactively update form whenever editData changes or modal opens
   useEffect(() => {
     if (open) {
       if (editData) {
@@ -88,7 +87,7 @@ const TransactionModal = ({ open, onClose, editData }) => {
       title={editData ? "Edit Transaction" : "Add Transaction"}
       footer={null}
       width={480}
-      destroyOnClose={false} // ✅ Keep false so our useEffect controls the values
+      destroyOnClose={false}
     >
       <Form form={form} layout="vertical" className={styles.form}>
         <Form.Item

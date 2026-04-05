@@ -25,7 +25,6 @@
   border-radius: 12px;
   border: 1px solid var(--border);
 
-  // Align all selects and inputs to same height
   :global(.ant-select-selector) {
     height: 36px !important;
   }
