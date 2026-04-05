@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
+  background: #fff8f3;
   position: relative;
   overflow: hidden;
 }
@@ -23,34 +23,35 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 480px;
+  max-width: 440px;
   padding: 24px 16px;
 }
 
 .card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12);
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #f0ede9;
 }
 
 .cardTop {
   background: #f97316;
-  padding: 20px 32px;
+  padding: 22px 32px;
   text-align: center;
 }
 
 .brand {
   margin: 0 !important;
   color: #fff !important;
-  font-size: 24px !important;
+  font-size: 22px !important;
   font-weight: 800 !important;
   letter-spacing: -0.5px;
 }
 
 .cardBody {
   padding: 28px 32px 32px;
+  background: #ffffff;
 }
 
 .cardHeader {
@@ -67,26 +68,50 @@
 
 .cardSub {
   font-size: 13px;
-  color: #6b7280;
+  color: #6b7280 !important;
 }
 
 .form {
   :global(.ant-form-item-label > label) {
-    font-size: 14px;
-    font-weight: 500;
-    color: #374151;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #374151 !important;
   }
-}
 
-.input {
-  border-radius: 8px !important;
-  border-color: #e5e7eb !important;
-  font-size: 14px !important;
+  :global(.ant-form-item-explain-error) {
+    font-size: 12px;
+    color: #ef4444;
+  }
 
-  &:focus,
-  &:hover {
-    border-color: #f97316 !important;
-    box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.12) !important;
+  :global(.ant-input),
+  :global(.ant-input-affix-wrapper) {
+    background: #f9fafb !important;
+    border-color: #e5e7eb !important;
+    color: #111827 !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+    box-shadow: none !important;
+
+    input {
+      background: transparent !important;
+      color: #111827 !important;
+
+      &::placeholder {
+        color: #9ca3af !important;
+      }
+    }
+
+    &:hover,
+    &:focus,
+    &.ant-input-affix-wrapper-focused {
+      border-color: #f97316 !important;
+      box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.12) !important;
+      background: #fff !important;
+    }
+  }
+
+  :global(.ant-input-suffix .anticon) {
+    color: #9ca3af !important;
   }
 }
 
@@ -100,11 +125,20 @@
 
 .remember {
   font-size: 13px;
-  color: #374151;
+  color: #374151 !important;
 
   :global(.ant-checkbox-checked .ant-checkbox-inner) {
     background: #f97316 !important;
     border-color: #f97316 !important;
+  }
+
+  :global(.ant-checkbox-inner) {
+    border-color: #d1d5db !important;
+    background: #fff !important;
+  }
+
+  :global(.ant-checkbox + span) {
+    color: #374151 !important;
   }
 }
 
@@ -125,16 +159,19 @@
 
 .submitBtn {
   height: 46px !important;
-  font-size: 16px !important;
+  font-size: 15px !important;
   font-weight: 600 !important;
   border-radius: 8px !important;
   background: #f97316 !important;
   border-color: #f97316 !important;
+  color: #fff !important;
   margin-top: 4px;
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35) !important;
 
   &:hover {
     background: #ea6c0a !important;
     border-color: #ea6c0a !important;
+    box-shadow: 0 4px 20px rgba(249, 115, 22, 0.45) !important;
   }
 }
 
@@ -145,7 +182,7 @@
 
 .switchText {
   font-size: 13px;
-  color: #6b7280;
+  color: #6b7280 !important;
 }
 
 .switchLink {
