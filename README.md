@@ -23,6 +23,8 @@ Want to explore the app without signing up?
 
 - 🔐 **Authentication** — Sign up, sign in, email confirmation, and password reset via Supabase Auth
 - 📊 **Dashboard** — Balance overview, real-time % change vs last month, area charts, pie charts, recent transactions
+- 🔗**Owner** — Header has a Share view button that copies yourapp.com/dashboard?viewer=true to clipboard. Also available in the avatar dropdown menu.
+- 👁️ **Viewer** — On visiting that URL shows an orange banner at the top ("Viewer mode — you can browse but not make changes"), and on Transactions the Add/Edit/Delete buttons are completely hidden (not just disabled) and TransactionModal is not rendered at all. Dashboard, Analytics, and Settings pages are read-only by nature so needed no changes.
 - 💳 **Transactions** — Add, edit, delete, filter, search, and export transactions
 - 📈 **Analytics** — Monthly comparisons, category breakdowns, savings rate insights
 - 🌙 **Dark / Light Mode** — System-aware theme toggle, persisted across sessions
