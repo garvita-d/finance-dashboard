@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Form, Input, Button, Typography, Checkbox, Modal, Result } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Typography,
+  Checkbox,
+  Modal,
+  Result,
+  notification,
+} from "antd";
 import { useMutation } from "@tanstack/react-query";
 import { signIn, signUp, resetPassword } from "../../api/auth/mutations";
 import { useAppContext } from "../../context/AppContext";
@@ -39,8 +48,7 @@ const WaveBg = () => (
 );
 
 const Login = () => {
-  const { notificationApi } = useAppContext();
-  console.log("notificationApi:", notificationApi);
+  const [notificationApi, contextHolder] = notification.useNotification();
   const [form] = Form.useForm();
   const [forgotForm] = Form.useForm();
   const [tab, setTab] = useState("signin");
@@ -137,6 +145,7 @@ const Login = () => {
   if (tab === "confirm_pending") {
     return (
       <div data-theme="light">
+        {contextHolder}
         <div className={styles.page}>
           <WaveBg />
           <div className={styles.cardWrap}>
@@ -183,6 +192,7 @@ const Login = () => {
 
   return (
     <div data-theme="light">
+      {contextHolder}
       <div className={styles.page}>
         <WaveBg />
 
