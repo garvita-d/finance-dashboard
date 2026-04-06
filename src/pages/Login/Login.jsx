@@ -58,6 +58,30 @@ const Login = () => {
             "Please check your inbox and click the confirmation link first.",
           duration: 6,
         });
+      } else if (
+        msg.toLowerCase().includes("invalid login credentials") ||
+        msg.toLowerCase().includes("invalid credentials") ||
+        msg.toLowerCase().includes("user not found") ||
+        msg.toLowerCase().includes("no user found")
+      ) {
+        notificationApi.error({
+          message: "Account not found",
+          description: (
+            <span>
+              No account exists with this email.{" "}
+              <span
+                style={{ color: "#f97316", cursor: "pointer", fontWeight: 500 }}
+                onClick={() => {
+                  setTab("signup");
+                  form.resetFields();
+                }}
+              >
+                Sign up here →
+              </span>
+            </span>
+          ),
+          duration: 8,
+        });
       } else {
         notificationApi.error({ message: msg });
       }
