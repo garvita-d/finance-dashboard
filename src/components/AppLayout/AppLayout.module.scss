@@ -78,7 +78,6 @@
   }
 }
 
-/* ─── Header ─────────────────────────────────────────── */
 .header {
   padding: 0 24px !important;
   height: 64px !important;
@@ -97,7 +96,6 @@
   }
 }
 
-/* Left slot — mobile logo only */
 .headerLeft {
   display: none;
   align-items: center;
@@ -109,7 +107,6 @@
   }
 }
 
-/* Right slot */
 .headerRight {
   display: flex;
   align-items: center;
@@ -117,7 +114,6 @@
   margin-left: auto;
 }
 
-/* ─── Visibility helpers ──────────────────────────────── */
 .desktopOnly {
   @media (max-width: 767px) {
     display: none !important;
@@ -132,7 +128,6 @@
   }
 }
 
-/* ─── Mobile logo ────────────────────────────────────── */
 .mobileLogoIcon {
   width: 28px;
   height: 28px;
@@ -152,7 +147,6 @@
   color: var(--text-primary);
 }
 
-/* ─── Theme toggle ───────────────────────────────────── */
 .themeToggle {
   display: flex;
   align-items: center;
@@ -179,7 +173,6 @@
   line-height: 1;
 }
 
-/* ─── User email in dropdown ─────────────────────────── */
 .userEmail {
   font-size: 12px;
   color: var(--text-secondary) !important;
@@ -190,7 +183,6 @@
   display: block;
 }
 
-/* ─── Desktop share button ───────────────────────────── */
 .shareBtn {
   display: flex;
   align-items: center;
@@ -217,7 +209,6 @@
   }
 }
 
-/* ─── Mobile share icon button ───────────────────────── */
 .shareIconBtn {
   width: 34px;
   height: 34px;
@@ -243,7 +234,6 @@
   }
 }
 
-/* ─── Viewer banner ──────────────────────────────────── */
 .viewerBanner {
   display: flex;
   align-items: center;
@@ -279,7 +269,6 @@
   }
 }
 
-/* ─── Viewer chip ────────────────────────────────────── */
 .viewerChip {
   display: flex;
   align-items: center;
@@ -313,7 +302,6 @@
   }
 }
 
-/* ─── Content ────────────────────────────────────────── */
 .content {
   padding: 24px;
   min-height: calc(100vh - 64px);
@@ -325,7 +313,6 @@
   }
 }
 
-/* ─── Bottom nav ─────────────────────────────────────── */
 .bottomNav {
   display: none;
   position: fixed;
@@ -400,7 +387,6 @@
   margin-top: 2px;
 }
 
-/* ─── Share drawer ───────────────────────────────────── */
 .shareDrawer {
   :global(.ant-drawer-header) {
     background: var(--bg-card) !important;

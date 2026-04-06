@@ -46,7 +46,6 @@ const NAV_ITEMS = [
   { key: "/settings", label: "Settings", icon: <SettingsIcon />, emoji: "⚙️" },
 ];
 
-// Share icon SVG
 const ShareSvg = () => (
   <svg
     width="17"
@@ -94,12 +93,10 @@ const AppLayout = ({ children }) => {
       });
       setShareDrawerOpen(false);
     } catch {
-      // Fallback for browsers that block clipboard without interaction
       notification.error({ message: "Could not copy. Try copying manually." });
     }
   };
 
-  // Use native Web Share API on mobile if available
   const handleMobileShare = async () => {
     const link = getViewerLink();
     if (navigator.share) {
@@ -113,7 +110,6 @@ const AppLayout = ({ children }) => {
         // User cancelled share — no-op
       }
     } else {
-      // Fallback: open the drawer with copy option
       setShareDrawerOpen(true);
     }
   };
@@ -170,7 +166,6 @@ const AppLayout = ({ children }) => {
       </Sider>
 
       <Layout>
-        {/* Viewer banner */}
         {isViewer && (
           <div className={styles.viewerBanner}>
             <span className={styles.viewerBannerIcon}>👁️</span>
@@ -181,15 +176,11 @@ const AppLayout = ({ children }) => {
         )}
 
         <Header className={styles.header}>
-          {/* Left — mobile logo */}
           <div className={styles.headerLeft}>
             <div className={styles.mobileLogoIcon}>F</div>
             <span className={styles.mobileLogoText}>inFlow</span>
           </div>
-
-          {/* Right — actions */}
           <div className={styles.headerRight}>
-            {/* Desktop share button (owner only) */}
             {!isViewer && (
               <button
                 onClick={handleCopyViewerLink}
@@ -199,7 +190,6 @@ const AppLayout = ({ children }) => {
               </button>
             )}
 
-            {/* Mobile share icon button (owner only) — always visible on mobile */}
             {!isViewer && (
               <button
                 onClick={handleMobileShare}
@@ -210,7 +200,6 @@ const AppLayout = ({ children }) => {
               </button>
             )}
 
-            {/* Theme toggle */}
             <div className={styles.themeToggle} onClick={toggleTheme}>
               <span className={styles.themeIcon}>{isDark ? "🌙" : "☀️"}</span>
               <Switch
@@ -220,7 +209,6 @@ const AppLayout = ({ children }) => {
               />
             </div>
 
-            {/* Avatar (owner) OR viewer chip */}
             {isViewer ? (
               <div className={styles.viewerChip}>
                 <span className={styles.viewerDot} />
@@ -250,7 +238,6 @@ const AppLayout = ({ children }) => {
         <Content className={styles.content}>{children}</Content>
       </Layout>
 
-      {/* Mobile bottom nav */}
       <nav className={styles.bottomNav}>
         {NAV_ITEMS.map((item) => {
           const isActive = location.pathname === item.key;
@@ -276,7 +263,6 @@ const AppLayout = ({ children }) => {
         })}
       </nav>
 
-      {/* Share drawer fallback (when Web Share API unavailable) */}
       <Drawer
         title="Share your dashboard"
         placement="bottom"

@@ -245,14 +245,12 @@ const Transactions = () => {
         </Col>
         <Col>
           <Space size={8}>
-            {/* Export always visible — reading data is fine for viewers */}
             <Dropdown menu={{ items: exportMenuItems }}>
               <Button icon={<ExportIcon />} size="small">
                 Export
               </Button>
             </Dropdown>
 
-            {/* Add button hidden for viewers */}
             {!isViewer && (
               <Button
                 type="primary"
@@ -264,7 +262,6 @@ const Transactions = () => {
               </Button>
             )}
 
-            {/* Viewer mode: show a subtle read-only badge instead */}
             {isViewer && (
               <Tooltip title="You're in viewer mode — edits are disabled">
                 <div className={styles.readOnlyBadge}>👁️ Read-only</div>
@@ -384,7 +381,6 @@ const Transactions = () => {
                       {Number(tx.amount).toLocaleString("en-IN")}
                     </span>
 
-                    {/* Mobile action buttons hidden in viewer mode */}
                     {!isViewer && (
                       <div className={styles.mobileCardActions}>
                         <Space size={4}>
