@@ -40,6 +40,7 @@ const WaveBg = () => (
 
 const Login = () => {
   const { notificationApi } = useAppContext();
+  console.log("notificationApi:", notificationApi);
   const [form] = Form.useForm();
   const [forgotForm] = Form.useForm();
   const [tab, setTab] = useState("signin");
