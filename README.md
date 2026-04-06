@@ -6,10 +6,23 @@
 
 ---
 
+## 🧪 Test Account
+
+Want to explore the app without signing up?
+
+| Field    | Value                          |
+| -------- | ------------------------------ |
+| Email    | `garvita.expenses@example.com` |
+| Password | `test1234`                     |
+
+> This account has pre-loaded sample transactions so you can explore all features immediately.
+
+---
+
 ## Features at a Glance
 
-- 🔐 **Authentication** — Sign up, sign in, password reset via Supabase Auth
-- 📊 **Dashboard** — Balance overview, summary cards, area charts, pie charts, recent transactions
+- 🔐 **Authentication** — Sign up, sign in, email confirmation, and password reset via Supabase Auth
+- 📊 **Dashboard** — Balance overview, real-time % change vs last month, area charts, pie charts, recent transactions
 - 💳 **Transactions** — Add, edit, delete, filter, search, and export transactions
 - 📈 **Analytics** — Monthly comparisons, category breakdowns, savings rate insights
 - 🌙 **Dark / Light Mode** — System-aware theme toggle, persisted across sessions
@@ -58,7 +71,7 @@ finance-dashboard/
 │   ├── config/
 │   │   └── supabaseClient.js        # Supabase client initialisation
 │   ├── constants/
-│   │   └── index.js                 # Categories, colors, types, sample data
+│   │   └── index.js                 # Categories, colors, types
 │   ├── context/
 │   │   └── AppContext.jsx           # Global state: auth, theme, mutations
 │   ├── icons/
@@ -94,7 +107,7 @@ finance-dashboard/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/finance-dashboard.git
+git clone https://github.com/garvita-d/finance-dashboard.git
 cd finance-dashboard
 ```
 
@@ -126,22 +139,24 @@ create table transactions (
 -- Row Level Security
 alter table transactions enable row level security;
 
-create policy "Users can view their own transactions"
-  on transactions for select
-  using (auth.uid() = user_id);
+create policy "select_own" on transactions
+  for select using (auth.uid() = user_id);
 
-create policy "Users can insert their own transactions"
-  on transactions for insert
-  with check (auth.uid() = user_id);
+create policy "insert_own" on transactions
+  for insert with check (auth.uid() = user_id);
 
-create policy "Users can update their own transactions"
-  on transactions for update
-  using (auth.uid() = user_id);
+create policy "update_own" on transactions
+  for update using (auth.uid() = user_id);
 
-create policy "Users can delete their own transactions"
-  on transactions for delete
-  using (auth.uid() = user_id);
+create policy "delete_own" on transactions
+  for delete using (auth.uid() = user_id);
 ```
+
+> ⚠️ **Important:** Never add policies named "Allow authenticated users" or any `ALL` policy without a `user_id` filter — these bypass RLS and expose every user's data to everyone.
+
+#### Enable Email Confirmation
+
+In your Supabase Dashboard → **Authentication → Providers → Email**, turn on **"Confirm email"**. New users must verify their email before accessing the dashboard.
 
 #### Get Your API Keys
 
@@ -186,18 +201,18 @@ The app will be available at **http://localhost:5173**
 
 inFlow uses **Supabase Auth** for all user management:
 
-| Flow                 | Description                                                                                    |
-| -------------------- | ---------------------------------------------------------------------------------------------- |
-| **Sign Up**          | Creates account + sends email confirmation. User is redirected to a "check your email" screen. |
-| **Sign In**          | Authenticates with email + password. Session persisted in `localStorage`.                      |
-| **Forgot Password**  | Sends reset email via Supabase. Clicking link redirects to `/reset-password`.                  |
-| **Reset Password**   | Supabase fires a `PASSWORD_RECOVERY` auth event; user sets a new password.                     |
-| **Sign Out**         | Clears session and React Query cache.                                                          |
-| **Protected Routes** | All dashboard routes redirect to `/login` if unauthenticated.                                  |
+| Flow                 | Description                                                                                                              |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **Sign Up**          | Creates account + sends email confirmation. User sees a "check your email" screen until verified.                        |
+| **Sign In**          | Authenticates with email + password. Shows a warning if email is not yet confirmed. Session persisted in `localStorage`. |
+| **Forgot Password**  | Sends reset email via Supabase. Clicking link redirects to `/reset-password`.                                            |
+| **Reset Password**   | Supabase fires a `PASSWORD_RECOVERY` auth event; user sets a new password.                                               |
+| **Sign Out**         | Clears session and React Query cache.                                                                                    |
+| **Protected Routes** | All dashboard routes redirect to `/login` if unauthenticated.                                                            |
 
 ---
 
-## 🗃 Data Layer
+## Data Layer
 
 ### Supabase Client (`src/config/supabaseClient.js`)
 
@@ -208,23 +223,33 @@ Initialised once using environment variables. Exported as a singleton used acros
 | Function                                | Description                                                                 |
 | --------------------------------------- | --------------------------------------------------------------------------- |
 | `fetchTransactions()`                   | Fetches all transactions for the signed-in user, ordered by date descending |
-| `createTransaction(payload)`            | Inserts a new transaction row                                               |
+| `createTransaction(payload)`            | Inserts a new transaction row with the current user's `user_id`             |
 | `updateTransaction({ id, ...payload })` | Updates an existing transaction by ID                                       |
 | `deleteTransaction(id)`                 | Deletes a transaction by ID                                                 |
 
 ### React Query
 
-`useGetTransactions()` is the primary data hook. It caches results for 30 seconds (`staleTime: 30000`) and automatically refetches when auth state changes. All mutations call `queryClient.invalidateQueries` on success to keep the UI in sync.
+`useGetTransactions()` is the primary data hook. It uses `["transactions", user?.id]` as the query key — ensuring different users never share cached data. It has `staleTime: 30000` and `enabled: !!user` so it only fetches when a user is logged in. All mutations call `queryClient.invalidateQueries` on success to keep the UI in sync.
+
+---
+
+## Dashboard — Real Percentage Changes
+
+The three summary cards (Balance, Income, Expenses) show **real percentage changes** compared to the previous calendar month — not hardcoded values.
+
+| Card         | Calculation                                               |
+| ------------ | --------------------------------------------------------- |
+| **Balance**  | This month's net (income − expenses) vs last month's net  |
+| **Income**   | This month's total income vs last month's total income    |
+| **Expenses** | This month's expenses vs last month's (↑ = bad, ↓ = good) |
+
+New users with no transactions see `0.00%` on all cards.
 
 ---
 
 ## Theming
 
 The app supports **light and dark modes** via CSS custom properties on the `<html>` element (`data-theme="light"` / `"dark"`).
-
-### CSS Variables
-
-Defined in `src/index.css`:
 
 ```css
 :root,
@@ -233,20 +258,16 @@ Defined in `src/index.css`:
   --bg-card: #ffffff;
   --text-primary: #111827;
   --primary: #f97316;
-  /* ... */
 }
 
 [data-theme="dark"] {
   --bg-layout: #0a0a0a;
   --bg-card: #111111;
   --text-primary: #f0f0f0;
-  /* ... */
 }
 ```
 
-Ant Design's `ConfigProvider` is wired to switch between `defaultAlgorithm` and `darkAlgorithm` based on the same theme state.
-
-Theme preference is **persisted to `localStorage`** and defaults to the system preference via `window.matchMedia('(prefers-color-scheme: dark)')`.
+Ant Design's `ConfigProvider` switches between `defaultAlgorithm` and `darkAlgorithm` based on the same theme state. Preference is persisted to `localStorage` and defaults to the system setting via `prefers-color-scheme`.
 
 ---
 
@@ -254,10 +275,10 @@ Theme preference is **persisted to `localStorage`** and defaults to the system p
 
 ### Dashboard (`/dashboard`)
 
-- **SummaryCard** ×3 — Balance, Income This Month, Expenses This Month
+- **SummaryCard** ×3 — Balance, Income This Month, Expenses This Month with real % vs last month
 - **BalanceChart** — Area chart with 4 tabs (Expense / Income / Savings / Investment) and a date range dropdown (7 / 14 / 30 days)
 - **SpendingChart** — Donut chart toggling between income and expense category breakdown
-- **Recent Transactions** — Last 4 transactions with a "View all" link
+- **Recent Transactions** — Last 4 transactions with a "View all" link. Shows "No transactions yet" for new users.
 
 ### Transactions (`/transactions`)
 
@@ -283,42 +304,23 @@ Theme preference is **persisted to `localStorage`** and defaults to the system p
 ### Login (`/login`)
 
 - Sign In / Sign Up tabs with form validation
+- Warning shown if email is not yet confirmed
 - "Forgot password" modal with reset flow
-- Email confirmation pending screen
+- Email confirmation pending screen after sign up
 
 ---
 
-## Key Architectural Decisions
+## Security
 
-### Global State (`AppContext`)
-
-`AppContext` manages:
-
-- **Auth state** (`user`, `authLoading`) — populated from Supabase session on mount, kept in sync via `onAuthStateChange`
-- **Theme** (`theme`, `toggleTheme`) — persisted to localStorage
-- **Mutations** — `addTransaction`, `editTransaction`, `deleteTransaction` exposed to all children to avoid prop drilling
-
-### Component Colocation
-
-Each component/page has its own `.module.scss` file colocated alongside it, keeping styles scoped and portable.
-
-### SPA Routing on Vercel
-
-`vercel.json` includes a catch-all rewrite so that direct URL access and page refreshes work correctly for client-side routes:
-
-```json
-{ "rewrites": [{ "source": "/(.*)", "destination": "/" }] }
-```
+- **Row Level Security (RLS)** is enabled on the `transactions` table
+- Every query explicitly filters by `user_id = auth.uid()`
+- The React Query key includes `user?.id` — different users never share cached data
+- `queryClient.clear()` is called on every auth state change (sign in, sign out, token refresh)
+- New users see an empty dashboard (₹0.00) with no data from other accounts
 
 ---
 
 ## Deploying to Vercel
-
-### One-Click Deploy
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
-
-### Manual Deploy
 
 1. Push your code to GitHub.
 2. Import the repository on [vercel.com](https://vercel.com).
