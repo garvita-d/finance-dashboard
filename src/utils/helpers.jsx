@@ -1,4 +1,6 @@
 import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+dayjs.extend(isSameOrAfter);
 import { ROLE_STORAGE_KEY } from "../constants";
 
 export const loadRole = () => {
@@ -107,4 +109,33 @@ export const exportToJSON = (transactions) => {
   a.download = "transactions.json";
   a.click();
   URL.revokeObjectURL(url);
+};
+
+export const getPercentChange = (current, previous) => {
+  if (previous === 0 && current === 0)
+    return { percent: "0.00", isPositive: true };
+  if (previous === 0) return { percent: "100.00", isPositive: current > 0 };
+  const change = ((current - previous) / Math.abs(previous)) * 100;
+  return {
+    percent: Math.abs(change).toFixed(2),
+    isPositive: change >= 0,
+  };
+};
+
+export const getLastMonthTransactions = (transactions) => {
+  const now = dayjs();
+  const startOfThisMonth = now.startOf("month");
+  const startOfLastMonth = startOfThisMonth.subtract(1, "month");
+
+  return transactions.filter((t) => {
+    const d = dayjs(t.date);
+    return d.isBefore(startOfThisMonth) && d.isSameOrAfter(startOfLastMonth);
+  });
+};
+
+export const getThisMonthTransactions = (transactions) => {
+  const startOfThisMonth = dayjs().startOf("month");
+  return transactions.filter((t) =>
+    dayjs(t.date).isSameOrAfter(startOfThisMonth),
+  );
 };

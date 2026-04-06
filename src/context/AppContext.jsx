@@ -37,19 +37,20 @@ export const AppProvider = ({ children }) => {
   }, [theme]);
 
   useEffect(() => {
-    getSession().then((session) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       setAuthLoading(false);
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-        queryClient.invalidateQueries({ queryKey: ["transactions"] });
-      },
-    );
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setUser(session?.user ?? null);
+      queryClient.clear();
+      setAuthLoading(false);
+    });
 
-    return () => listener.subscription.unsubscribe();
+    return () => subscription.unsubscribe();
   }, [queryClient]);
 
   const addMutation = useMutation({

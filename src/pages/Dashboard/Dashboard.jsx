@@ -9,38 +9,14 @@ import {
   getTotalExpenses,
   getBalance,
   formatCurrency,
+  getPercentChange,
+  getLastMonthTransactions,
+  getThisMonthTransactions,
 } from "../../utils/helpers";
 import { CATEGORY_COLORS } from "../../constants";
 import styles from "./Dashboard.module.scss";
 
 const { Title, Text } = Typography;
-
-const CARD_CONFIG = (income, expenses, balance) => [
-  {
-    title: "Balance",
-    amount: balance,
-    percent: "10.32",
-    isPositive: true,
-    color: "#4f46e5",
-    icon: "💳",
-  },
-  {
-    title: "Incomes This Month",
-    amount: income,
-    percent: "16.02",
-    isPositive: true,
-    color: "#10b981",
-    icon: "📥",
-  },
-  {
-    title: "Expenses This Month",
-    amount: expenses,
-    percent: "4.32",
-    isPositive: false,
-    color: "#ef4444",
-    icon: "📤",
-  },
-];
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -54,11 +30,50 @@ const Dashboard = () => {
     );
   }
 
-  const income = getTotalIncome(transactions);
-  const expenses = getTotalExpenses(transactions);
+  const thisMonth = getThisMonthTransactions(transactions);
+  const lastMonth = getLastMonthTransactions(transactions);
+
+  const income = getTotalIncome(thisMonth);
+  const expenses = getTotalExpenses(thisMonth);
   const balance = getBalance(transactions);
+
+  const lastIncome = getTotalIncome(lastMonth);
+  const lastExpenses = getTotalExpenses(lastMonth);
+  const thisMonthNet = income - expenses;
+  const lastMonthNet = lastIncome - lastExpenses;
+
+  const balanceChange = getPercentChange(thisMonthNet, lastMonthNet);
+  const incomeChange = getPercentChange(income, lastIncome);
+  const expensesChange = getPercentChange(expenses, lastExpenses);
+
   const recentTransactions = transactions.slice(0, 4);
-  const cards = CARD_CONFIG(income, expenses, balance);
+
+  const cards = [
+    {
+      title: "Balance",
+      amount: balance,
+      percent: balanceChange.percent,
+      isPositive: balanceChange.isPositive,
+      color: "#4f46e5",
+      icon: "💳",
+    },
+    {
+      title: "Incomes This Month",
+      amount: income,
+      percent: incomeChange.percent,
+      isPositive: incomeChange.isPositive,
+      color: "#10b981",
+      icon: "📥",
+    },
+    {
+      title: "Expenses This Month",
+      amount: expenses,
+      percent: expensesChange.percent,
+      isPositive: !expensesChange.isPositive,
+      color: "#ef4444",
+      icon: "📤",
+    },
+  ];
 
   return (
     <div className={styles.container}>
