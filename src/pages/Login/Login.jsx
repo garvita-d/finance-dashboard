@@ -49,9 +49,13 @@ const Login = () => {
 
   const signInMutation = useMutation({
     mutationFn: (payload) => signIn(payload),
+    onSuccess: () => {
+      // navigation handled by AppContext auth state change
+    },
     onError: (err) => {
-      const msg = err.message || "Sign in failed";
-      if (msg.toLowerCase().includes("email not confirmed")) {
+      const msg = String(err?.message || err || "Sign in failed").toLowerCase();
+
+      if (msg.includes("email not confirmed")) {
         notificationApi.warning({
           message: "Email not confirmed",
           description:
@@ -59,10 +63,10 @@ const Login = () => {
           duration: 6,
         });
       } else if (
-        msg.toLowerCase().includes("invalid login credentials") ||
-        msg.toLowerCase().includes("invalid credentials") ||
-        msg.toLowerCase().includes("user not found") ||
-        msg.toLowerCase().includes("no user found")
+        msg.includes("invalid login credentials") ||
+        msg.includes("invalid credentials") ||
+        msg.includes("user not found") ||
+        msg.includes("no user found")
       ) {
         notificationApi.error({
           message: "Account not found",
@@ -70,7 +74,12 @@ const Login = () => {
             <span>
               No account exists with this email.{" "}
               <span
-                style={{ color: "#f97316", cursor: "pointer", fontWeight: 500 }}
+                style={{
+                  color: "#f97316",
+                  cursor: "pointer",
+                  fontWeight: 500,
+                  textDecoration: "underline",
+                }}
                 onClick={() => {
                   setTab("signup");
                   form.resetFields();
@@ -83,7 +92,11 @@ const Login = () => {
           duration: 8,
         });
       } else {
-        notificationApi.error({ message: msg });
+        notificationApi.error({
+          message: "Sign in failed, Sign up to get started",
+          description: err?.message || "Please try again.",
+          duration: 5,
+        });
       }
     },
   });
