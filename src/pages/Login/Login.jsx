@@ -11,9 +11,8 @@ import {
 } from "antd";
 import { useMutation } from "@tanstack/react-query";
 import { signIn, signUp, resetPassword } from "../../api/auth/mutations";
-import { useAppContext } from "../../context/AppContext";
 import styles from "./Login.module.scss";
-
+import supabase from "../../config/supabaseClient";
 const { Title, Text } = Typography;
 
 const WaveBg = () => (
@@ -58,9 +57,6 @@ const Login = () => {
 
   const signInMutation = useMutation({
     mutationFn: (payload) => signIn(payload),
-    onSuccess: () => {
-      // navigation handled by AppContext auth state change
-    },
     onError: (err) => {
       const msg = String(err?.message || err || "Sign in failed").toLowerCase();
 
@@ -77,32 +73,52 @@ const Login = () => {
         msg.includes("user not found") ||
         msg.includes("no user found")
       ) {
-        notificationApi.error({
-          message: "Account not found",
-          description: (
-            <span>
-              No account exists with this email.{" "}
-              <span
-                style={{
-                  color: "#f97316",
-                  cursor: "pointer",
-                  fontWeight: 500,
-                  textDecoration: "underline",
-                }}
-                onClick={() => {
-                  setTab("signup");
-                  form.resetFields();
-                }}
-              >
-                Sign up here →
-              </span>
-            </span>
-          ),
-          duration: 8,
-        });
+        supabase.auth
+          .signInWithOtp({
+            email: form.getFieldValue("email"),
+            options: { shouldCreateUser: false },
+          })
+          .then(({ error }) => {
+            if (
+              error?.message?.toLowerCase().includes("user not found") ||
+              error?.message?.toLowerCase().includes("no user found") ||
+              error?.message?.toLowerCase().includes("signups not allowed")
+            ) {
+              notificationApi.error({
+                message: "Account not found",
+                description: (
+                  <span>
+                    No account exists with this email.{" "}
+                    <span
+                      style={{
+                        color: "#f97316",
+                        cursor: "pointer",
+                        fontWeight: 500,
+                        textDecoration: "underline",
+                      }}
+                      onClick={() => {
+                        setTab("signup");
+                        form.resetFields();
+                      }}
+                    >
+                      Sign up here →
+                    </span>
+                  </span>
+                ),
+                duration: 8,
+              });
+            } else {
+              notificationApi.error({
+                message: "Wrong password",
+                description:
+                  "The password you entered is incorrect. Please try again.",
+                duration: 5,
+              });
+            }
+          });
       } else {
         notificationApi.error({
-          message: "Sign in failed, Sign up to get started",
+          message: "Sign in failed",
           description: err?.message || "Please try again.",
           duration: 5,
         });
