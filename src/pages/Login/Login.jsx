@@ -114,8 +114,38 @@ const Login = () => {
     mutationFn: (payload) => signUp(payload),
     onSuccess: (data, variables) => {
       if (!data.session) {
-        setConfirmEmail(variables.email);
-        setTab("confirm_pending");
+        if (
+          data.user &&
+          data.user.identities &&
+          data.user.identities.length === 0
+        ) {
+          notificationApi.error({
+            message: "Email already registered",
+            description: (
+              <span>
+                An account with this email already exists.{" "}
+                <span
+                  style={{
+                    color: "#f97316",
+                    cursor: "pointer",
+                    fontWeight: 500,
+                    textDecoration: "underline",
+                  }}
+                  onClick={() => {
+                    setTab("signin");
+                    form.resetFields();
+                  }}
+                >
+                  Sign in here →
+                </span>
+              </span>
+            ),
+            duration: 8,
+          });
+        } else {
+          setConfirmEmail(variables.email);
+          setTab("confirm_pending");
+        }
       } else {
         notificationApi.success({
           message: "Account created! Welcome to inFlow.",
