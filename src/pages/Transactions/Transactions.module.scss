@@ -260,3 +260,18 @@
   color: var(--text-muted);
   margin-top: 6px;
 }
+
+.readOnlyBadge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-layout);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: default;
+  height: 28px;
+}

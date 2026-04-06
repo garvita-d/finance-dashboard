@@ -13,10 +13,12 @@ import {
   Dropdown,
   Space,
   Spin,
+  Tooltip,
 } from "antd";
 import dayjs from "dayjs";
 import { useAppContext } from "../../context/AppContext";
 import { useGetTransactions } from "../../api/transactions/queries";
+import { useViewerMode } from "../..//components/hooks/useViewerMode";
 import TransactionModal from "../../components/TransactionModal/TransactionModal";
 import { exportToCSV, exportToJSON } from "../../utils/helpers";
 import { CATEGORIES, CATEGORY_COLORS } from "../../constants";
@@ -45,6 +47,7 @@ const CATEGORY_FILTER_OPTIONS = [
 const Transactions = () => {
   const { deleteTransaction, isDeleting } = useAppContext();
   const { data: transactions = [], isLoading } = useGetTransactions();
+  const { isViewer } = useViewerMode();
 
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
@@ -67,12 +70,13 @@ const Transactions = () => {
 
   const handleDelete = useCallback(
     (id) => {
+      if (isViewer) return;
       deleteTransaction(id, {
         onSuccess: () =>
           notification.success({ message: "Transaction deleted" }),
       });
     },
-    [deleteTransaction],
+    [deleteTransaction, isViewer],
   );
 
   const filtered = useMemo(() => {
@@ -184,35 +188,40 @@ const Transactions = () => {
       ),
       sorter: (a, b) => a.amount - b.amount,
     },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_, record) => (
-        <Space>
-          <Button
-            type="text"
-            size="small"
-            icon={<EditIcon />}
-            onClick={() => openEditModal(record)}
-            className={styles.editBtn}
-          />
-          <Popconfirm
-            title="Delete this transaction?"
-            onConfirm={() => handleDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button
-              type="text"
-              size="small"
-              icon={<DeleteIcon />}
-              className={styles.deleteBtn}
-              loading={isDeleting}
-            />
-          </Popconfirm>
-        </Space>
-      ),
-    },
+
+    ...(!isViewer
+      ? [
+          {
+            title: "Actions",
+            key: "actions",
+            render: (_, record) => (
+              <Space>
+                <Button
+                  type="text"
+                  size="small"
+                  icon={<EditIcon />}
+                  onClick={() => openEditModal(record)}
+                  className={styles.editBtn}
+                />
+                <Popconfirm
+                  title="Delete this transaction?"
+                  onConfirm={() => handleDelete(record.id)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<DeleteIcon />}
+                    className={styles.deleteBtn}
+                    loading={isDeleting}
+                  />
+                </Popconfirm>
+              </Space>
+            ),
+          },
+        ]
+      : []),
   ];
 
   if (isLoading) {
@@ -236,24 +245,36 @@ const Transactions = () => {
         </Col>
         <Col>
           <Space size={8}>
+            {/* Export always visible — reading data is fine for viewers */}
             <Dropdown menu={{ items: exportMenuItems }}>
               <Button icon={<ExportIcon />} size="small">
                 Export
               </Button>
             </Dropdown>
-            <Button
-              type="primary"
-              icon={<PlusIcon />}
-              onClick={openAddModal}
-              size="small"
-            >
-              Add new
-            </Button>
+
+            {/* Add button hidden for viewers */}
+            {!isViewer && (
+              <Button
+                type="primary"
+                icon={<PlusIcon />}
+                onClick={openAddModal}
+                size="small"
+              >
+                Add new
+              </Button>
+            )}
+
+            {/* Viewer mode: show a subtle read-only badge instead */}
+            {isViewer && (
+              <Tooltip title="You're in viewer mode — edits are disabled">
+                <div className={styles.readOnlyBadge}>👁️ Read-only</div>
+              </Tooltip>
+            )}
           </Space>
         </Col>
       </Row>
 
-      {/* Filters */}
+      {/* Filters — always visible */}
       <Row gutter={[8, 8]} className={styles.filterRow} align="middle">
         <Col xs={24} sm={8}>
           <Input
@@ -362,30 +383,34 @@ const Transactions = () => {
                       {isIncome ? "+" : "-"}₹
                       {Number(tx.amount).toLocaleString("en-IN")}
                     </span>
-                    <div className={styles.mobileCardActions}>
-                      <Space size={4}>
-                        <Button
-                          type="text"
-                          size="small"
-                          icon={<EditIcon />}
-                          onClick={() => openEditModal(tx)}
-                          className={styles.editBtn}
-                        />
-                        <Popconfirm
-                          title="Delete?"
-                          onConfirm={() => handleDelete(tx.id)}
-                          okText="Yes"
-                          cancelText="No"
-                        >
+
+                    {/* Mobile action buttons hidden in viewer mode */}
+                    {!isViewer && (
+                      <div className={styles.mobileCardActions}>
+                        <Space size={4}>
                           <Button
                             type="text"
                             size="small"
-                            icon={<DeleteIcon />}
-                            className={styles.deleteBtn}
+                            icon={<EditIcon />}
+                            onClick={() => openEditModal(tx)}
+                            className={styles.editBtn}
                           />
-                        </Popconfirm>
-                      </Space>
-                    </div>
+                          <Popconfirm
+                            title="Delete?"
+                            onConfirm={() => handleDelete(tx.id)}
+                            okText="Yes"
+                            cancelText="No"
+                          >
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<DeleteIcon />}
+                              className={styles.deleteBtn}
+                            />
+                          </Popconfirm>
+                        </Space>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -394,11 +419,13 @@ const Transactions = () => {
         </>
       )}
 
-      <TransactionModal
-        open={modalState.open}
-        onClose={closeModal}
-        editData={modalState.editData}
-      />
+      {!isViewer && (
+        <TransactionModal
+          open={modalState.open}
+          onClose={closeModal}
+          editData={modalState.editData}
+        />
+      )}
     </div>
   );
 };

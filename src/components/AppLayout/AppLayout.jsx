@@ -4,13 +4,15 @@ import {
   Menu,
   Avatar,
   Typography,
-  Row,
-  Col,
   Switch,
   Dropdown,
+  Button,
+  notification,
+  Drawer,
 } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAppContext } from "../../context/AppContext";
+import { useViewerMode } from "../..//components/hooks/useViewerMode";
 import {
   DashboardIcon,
   AnalyticsIcon,
@@ -44,18 +46,89 @@ const NAV_ITEMS = [
   { key: "/settings", label: "Settings", icon: <SettingsIcon />, emoji: "⚙️" },
 ];
 
+// Share icon SVG
+const ShareSvg = () => (
+  <svg
+    width="17"
+    height="17"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="18" cy="5" r="3" />
+    <circle cx="6" cy="12" r="3" />
+    <circle cx="18" cy="19" r="3" />
+    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+  </svg>
+);
+
 const AppLayout = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { theme, toggleTheme, logout, user } = useAppContext();
+  const { isViewer } = useViewerMode();
   const [collapsed, setCollapsed] = useState(false);
+  const [shareDrawerOpen, setShareDrawerOpen] = useState(false);
   const isDark = theme === "dark";
+
+  const getViewerLink = () => {
+    const url = new URL(window.location.href);
+    url.searchParams.set("viewer", "true");
+    url.pathname = "/dashboard";
+    return url.toString();
+  };
+
+  const handleCopyViewerLink = async () => {
+    const link = getViewerLink();
+    try {
+      await navigator.clipboard.writeText(link);
+      notification.success({
+        message: "Viewer link copied!",
+        description:
+          "Anyone with this link can view (but not edit) your dashboard.",
+        duration: 4,
+      });
+      setShareDrawerOpen(false);
+    } catch {
+      // Fallback for browsers that block clipboard without interaction
+      notification.error({ message: "Could not copy. Try copying manually." });
+    }
+  };
+
+  // Use native Web Share API on mobile if available
+  const handleMobileShare = async () => {
+    const link = getViewerLink();
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "inFlow — My Finance Dashboard",
+          text: "View my personal finance dashboard (read-only):",
+          url: link,
+        });
+      } catch {
+        // User cancelled share — no-op
+      }
+    } else {
+      // Fallback: open the drawer with copy option
+      setShareDrawerOpen(true);
+    }
+  };
 
   const userMenuItems = [
     {
       key: "email",
       label: <Text className={styles.userEmail}>{user?.email}</Text>,
       disabled: true,
+    },
+    { type: "divider" },
+    {
+      key: "share",
+      label: "🔗 Copy viewer link",
+      onClick: handleCopyViewerLink,
     },
     { type: "divider" },
     {
@@ -97,57 +170,87 @@ const AppLayout = ({ children }) => {
       </Sider>
 
       <Layout>
-        <Header className={styles.header}>
-          <Row
-            align="middle"
-            justify="space-between"
-            style={{ height: "100%" }}
-          >
-            <Col className={styles.mobileLogo}>
-              <div className={styles.mobileLogoIcon}>F</div>
-              <span className={styles.mobileLogoText}>inFlow</span>
-            </Col>
+        {/* Viewer banner */}
+        {isViewer && (
+          <div className={styles.viewerBanner}>
+            <span className={styles.viewerBannerIcon}>👁️</span>
+            <span className={styles.viewerBannerText}>
+              <strong>Viewer mode</strong> — you can browse but not make changes
+            </span>
+          </div>
+        )}
 
-            <Col>
-              <Row align="middle" gutter={12}>
-                <Col>
-                  <div className={styles.themeToggle} onClick={toggleTheme}>
-                    <span className={styles.themeIcon}>
-                      {isDark ? "🌙" : "☀️"}
-                    </span>
-                    <Switch
-                      checked={isDark}
-                      size="small"
-                      style={{ background: isDark ? "#f97316" : "#d1d5db" }}
-                    />
-                  </div>
-                </Col>
-                <Col>
-                  <Dropdown
-                    menu={{ items: userMenuItems }}
-                    placement="bottomRight"
-                    trigger={["click"]}
-                  >
-                    <Avatar
-                      size={36}
-                      style={{
-                        background: "#f97316",
-                        cursor: "pointer",
-                        fontWeight: 700,
-                      }}
-                    >
-                      {initials}
-                    </Avatar>
-                  </Dropdown>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+        <Header className={styles.header}>
+          {/* Left — mobile logo */}
+          <div className={styles.headerLeft}>
+            <div className={styles.mobileLogoIcon}>F</div>
+            <span className={styles.mobileLogoText}>inFlow</span>
+          </div>
+
+          {/* Right — actions */}
+          <div className={styles.headerRight}>
+            {/* Desktop share button (owner only) */}
+            {!isViewer && (
+              <button
+                onClick={handleCopyViewerLink}
+                className={`${styles.shareBtn} ${styles.desktopOnly}`}
+              >
+                🔗 Share view
+              </button>
+            )}
+
+            {/* Mobile share icon button (owner only) — always visible on mobile */}
+            {!isViewer && (
+              <button
+                onClick={handleMobileShare}
+                className={`${styles.shareIconBtn} ${styles.mobileOnly}`}
+                aria-label="Share viewer link"
+              >
+                <ShareSvg />
+              </button>
+            )}
+
+            {/* Theme toggle */}
+            <div className={styles.themeToggle} onClick={toggleTheme}>
+              <span className={styles.themeIcon}>{isDark ? "🌙" : "☀️"}</span>
+              <Switch
+                checked={isDark}
+                size="small"
+                style={{ background: isDark ? "#f97316" : "#d1d5db" }}
+              />
+            </div>
+
+            {/* Avatar (owner) OR viewer chip */}
+            {isViewer ? (
+              <div className={styles.viewerChip}>
+                <span className={styles.viewerDot} />
+                Viewer
+              </div>
+            ) : (
+              <Dropdown
+                menu={{ items: userMenuItems }}
+                placement="bottomRight"
+                trigger={["click"]}
+              >
+                <Avatar
+                  size={36}
+                  style={{
+                    background: "#f97316",
+                    cursor: "pointer",
+                    fontWeight: 700,
+                  }}
+                >
+                  {initials}
+                </Avatar>
+              </Dropdown>
+            )}
+          </div>
         </Header>
 
         <Content className={styles.content}>{children}</Content>
       </Layout>
 
+      {/* Mobile bottom nav */}
       <nav className={styles.bottomNav}>
         {NAV_ITEMS.map((item) => {
           const isActive = location.pathname === item.key;
@@ -172,6 +275,38 @@ const AppLayout = ({ children }) => {
           );
         })}
       </nav>
+
+      {/* Share drawer fallback (when Web Share API unavailable) */}
+      <Drawer
+        title="Share your dashboard"
+        placement="bottom"
+        height="auto"
+        open={shareDrawerOpen}
+        onClose={() => setShareDrawerOpen(false)}
+        className={styles.shareDrawer}
+        styles={{ body: { padding: "16px 20px 32px" } }}
+      >
+        <div className={styles.shareDrawerContent}>
+          <p className={styles.shareDrawerDesc}>
+            Share this read-only link — viewers can browse your dashboard but
+            cannot add, edit, or delete anything.
+          </p>
+
+          <div className={styles.shareLinkBox}>
+            <span className={styles.shareLinkText}>{getViewerLink()}</span>
+          </div>
+
+          <Button
+            type="primary"
+            block
+            size="large"
+            onClick={handleCopyViewerLink}
+            className={styles.shareCopyBtn}
+          >
+            📋 Copy link
+          </Button>
+        </div>
+      </Drawer>
     </Layout>
   );
 };
