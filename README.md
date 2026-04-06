@@ -13,7 +13,7 @@ Want to explore the app without signing up?
 | Field    | Value                          |
 | -------- | ------------------------------ |
 | Email    | `garvita.expenses@example.com` |
-| Password | `test1234`                     |
+| Password | `Expenses@123`                 |
 
 > This account has pre-loaded sample transactions so you can explore all features immediately.
 
